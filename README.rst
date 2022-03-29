@@ -35,7 +35,7 @@ Setup
 
 phmang phemieh phiman phong
 2
-
+3
 
 
 Example training
