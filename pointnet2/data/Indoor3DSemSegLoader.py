@@ -23,7 +23,7 @@ def _load_data_file(name):
 
 
 class Indoor3DSemSeg(data.Dataset):
-    def __init__(self, num_points, train=True, download=True, data_precent=1.0):
+    def __init__(self, num_points, train=True, download=False, data_precent=1.0):
         super().__init__()
         self.data_precent = data_precent
         self.folder = "indoor3d_sem_seg_hdf5_data"
@@ -32,17 +32,6 @@ class Indoor3DSemSeg(data.Dataset):
             "https://shapenet.cs.stanford.edu/media/indoor3d_sem_seg_hdf5_data.zip"
         )
 
-        if download and not os.path.exists(self.data_dir):
-            zipfile = os.path.join(BASE_DIR, os.path.basename(self.url))
-            subprocess.check_call(
-                shlex.split("curl {} -o {}".format(self.url, zipfile))
-            )
-
-            subprocess.check_call(
-                shlex.split("unzip {} -d {}".format(zipfile, BASE_DIR))
-            )
-
-            subprocess.check_call(shlex.split("rm {}".format(zipfile)))
 
         self.train, self.num_points = train, num_points
 
@@ -95,7 +84,7 @@ class Indoor3DSemSeg(data.Dataset):
 
 
 if __name__ == "__main__":
-    dset = Indoor3DSemSeg(16, "./", train=True)
+    dset = Indoor3DSemSeg(16, "./")
     print(dset[0])
     print(len(dset))
     dloader = torch.utils.data.DataLoader(dset, batch_size=32, shuffle=True)
