@@ -1,15 +1,8 @@
 import os
 import sys
-pointnet2_pth , tail = os.path.split(__file__)
 
-pointnet2_pytorch_path ,tail = os.path.split(pointnet2_pth)
-print(pointnet2_pytorch_path)
-pointnet2_pytorch_path = os.path.join(pointnet2_pytorch_path , "/")
-print(pointnet2_pytorch_path)
-pointnet2_ops_lib_path  = os.path.join(pointnet2_pytorch_path,'pointnet2_ops_lib')
-print(pointnet2_pytorch_path,pointnet2_ops_lib_path )
-sys.path.insert(0,pointnet2_pytorch_path)
-sys.path.insert(0,pointnet2_ops_lib_path)
+sys.path.insert(0,"/kaggle/working/Pointnet2_PyTorch/")
+sys.path.insert(0,"/kaggle/working/Pointnet2_PyTorch/pointnet2_ops_lib/")
 import hydra
 import omegaconf
 import pytorch_lightning as pl
