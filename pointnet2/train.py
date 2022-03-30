@@ -1,6 +1,6 @@
 import os
 import sys
-pointnet2_pth , tail = os.path.split(__file__)
+pointnet2_pth , tail2 = os.path.split(__file__)
 pointnet2_pytorch_path ,tail = os.path.split(pointnet2_pth)
 pointnet2_ops_lib_path  = os.path.join(pointnet2_pytorch_path,'pointnet2_ops_lib')
 sys.path.insert(0,pointnet2_pytorch_path)
