@@ -44,8 +44,7 @@ def main(cfg):
         verbose=True,
     )
     trainer = pl.Trainer(
-        accelerator="tpu", 
-        devices=8,
+        gpus=list(cfg.gpus),
         max_epochs=cfg.epochs,
         early_stop_callback=early_stop_callback,
         checkpoint_callback=checkpoint_callback,
