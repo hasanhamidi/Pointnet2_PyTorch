@@ -44,7 +44,8 @@ def main(cfg):
         verbose=True,
     )
     trainer = pl.Trainer(
-        gpus=list(cfg.gpus),
+        accelerator="tpu", 
+        devices=8,
         max_epochs=cfg.epochs,
         early_stop_callback=early_stop_callback,
         checkpoint_callback=checkpoint_callback,
@@ -52,6 +53,7 @@ def main(cfg):
     )
 
     trainer.fit(model)
+    
 
 
 if __name__ == "__main__":
