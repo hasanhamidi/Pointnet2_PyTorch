@@ -212,6 +212,7 @@ class PointNet2ClassificationSSG(pl.LightningModule):
         self.val_dset = ModelNet40Cls(
             self.hparams["num_points"], transforms=None, train=False
         )
+        
 
     def _build_dataloader(self, dset, mode):
         return DataLoader(
@@ -228,3 +229,6 @@ class PointNet2ClassificationSSG(pl.LightningModule):
 
     def val_dataloader(self):
         return self._build_dataloader(self.val_dset, mode="val")
+
+    def test_dataloader(self):
+        return self._build_dataloader(self.test_dset, mode="val")
