@@ -1,0 +1,1 @@
+print("_".join("Area_4_bb".split("_")[0:2]))

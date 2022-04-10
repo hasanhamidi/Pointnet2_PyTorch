@@ -4,6 +4,7 @@ import subprocess
 
 import h5py
 import numpy as np
+from sympy import I
 import torch
 import torch.utils.data as data
 
@@ -16,6 +17,7 @@ def _get_data_files(list_filename):
 
 
 def _load_data_file(name):
+    
     f = h5py.File(name, "r")
     data = f["data"][:]
     label = f["label"][:]
@@ -23,7 +25,7 @@ def _load_data_file(name):
 
 
 class Indoor3DSemSeg(data.Dataset):
-    def __init__(self, num_points, train=True, download=False, data_precent=1.0):
+    def __init__(self, num_points, train=True,test_area = [5,6], download=False, data_precent=1.0):
         super().__init__()
         self.data_precent = data_precent
         self.folder = "indoor3d_sem_seg_hdf5_data"
@@ -48,12 +50,17 @@ class Indoor3DSemSeg(data.Dataset):
 
         data_batches = np.concatenate(data_batchlist, 0)
         labels_batches = np.concatenate(label_batchlist, 0)
-
-        test_area = "Area_5"
+        test_area_name = ["Area_"+str(num) for num in test_area]
         train_idxs, test_idxs = [], []
+        ii = 0
         for i, room_name in enumerate(room_filelist):
-            if test_area in room_name:
+            area_name =  "_".join(room_name.split("_")[0:2])
+            if area_name in test_area_name:
                 test_idxs.append(i)
+                ii+=1
+                if ii%1000 == 0:
+                    print(area_name)
+            
             else:
                 train_idxs.append(i)
 

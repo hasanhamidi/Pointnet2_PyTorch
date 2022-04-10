@@ -93,3 +93,4 @@ class PointNet2SemSegSSG(PointNet2ClassificationSSG):
         self.train_dset = Indoor3DSemSeg(self.hparams["num_points"], train=True)
         self.val_dset = Indoor3DSemSeg(self.hparams["num_points"], train=False)
         self.test_dset = Indoor3DSemSeg(self.hparams["num_points"], train=False)
+
