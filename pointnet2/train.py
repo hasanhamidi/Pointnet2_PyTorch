@@ -1,8 +1,13 @@
 import os
 import sys
 
-sys.path.insert(0,"/kaggle/working/Pointnet2_PyTorch/")
-sys.path.insert(0,"/kaggle/working/Pointnet2_PyTorch/pointnet2_ops_lib/")
+pointnet2_dir = os.path.split(os.path.abspath(__file__))[0]
+main_dir = "/".join(pointnet2_dir.split("/")[0:-1])
+pointnet2_ops_lib_dir = main_dir+"/pointnet2_ops_lib/" 
+
+sys.path.insert(0,main_dir)
+sys.path.insert(0,pointnet2_ops_lib_dir)
+
 import hydra
 import omegaconf
 import pytorch_lightning as pl
