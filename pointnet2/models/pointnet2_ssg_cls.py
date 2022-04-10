@@ -157,6 +157,12 @@ class PointNet2ClassificationSSG(pl.LightningModule):
         )
 
         return reduced_outputs
+    def test_step(self,batch,batch_idx):
+      pc, labels = batch
+      logits = forward(pc)
+      loss = F.cross_entropy(logits,labels)
+      acc = (torch.argmax(logits, dim=1) == labels).float().mean()
+      return dict(val_loss=loss, val_acc=acc)
 
     def configure_optimizers(self):
         lr_lbmd = lambda _: max(
