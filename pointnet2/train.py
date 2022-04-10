@@ -57,6 +57,7 @@ def main(cfg):
     )
 
     trainer.fit(model)
+    trainer.test(model)
     
 
 
