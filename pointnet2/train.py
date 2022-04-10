@@ -53,10 +53,10 @@ def main(cfg):
         max_epochs=cfg.epochs,
         early_stop_callback=early_stop_callback,
         checkpoint_callback=checkpoint_callback,
-        distributed_backend=cfg.distrib_backend,
+        distributed_backend=cfg.distrib_backend
     )
 
-    trainer.fit(model)
+    # trainer.fit(model)
     trainer.test(model)
     
 

@@ -57,7 +57,7 @@ class PointNet2ClassificationSSG(pl.LightningModule):
         super().__init__()
 
         self.hparams = hparams
-
+        self.flag = 1
         self._build_model()
 
     def _build_model(self):
@@ -124,7 +124,6 @@ class PointNet2ClassificationSSG(pl.LightningModule):
 
     def training_step(self, batch, batch_idx):
         pc, labels = batch
-
         logits = self.forward(pc)
         loss = F.cross_entropy(logits, labels)
         with torch.no_grad():
@@ -136,7 +135,6 @@ class PointNet2ClassificationSSG(pl.LightningModule):
 
     def validation_step(self, batch, batch_idx):
         pc, labels = batch
-
         logits = self.forward(pc)
         loss = F.cross_entropy(logits, labels)
         acc = (torch.argmax(logits, dim=1) == labels).float().mean()
@@ -159,10 +157,32 @@ class PointNet2ClassificationSSG(pl.LightningModule):
         return reduced_outputs
     def test_step(self,batch,batch_idx):
       pc, labels = batch
-      logits = forward(pc)
+      logits = self.forward(pc)
+      if self.flag:
+        print(logits.size())
+      self.flag = 0
       loss = F.cross_entropy(logits,labels)
-      acc = (torch.argmax(logits, dim=1) == labels).float().mean()
-      return dict(val_loss=loss, val_acc=acc)
+      results = torch.argmax(logits, dim=1)
+
+      return dict(res =results, label=labels)
+
+    def test_end(self, outputs):
+        print(outputs[0].size())
+        print(outputs[0][0])
+        print(outputs[0][1])
+        reduced_outputs = {}
+        for k in outputs[0]:
+            for o in outputs:
+                reduced_outputs[k] = reduced_outputs.get(k, []) + [o[k]]
+
+        for k in reduced_outputs:
+            reduced_outputs[k] = torch.stack(reduced_outputs[k]).mean()
+
+        reduced_outputs.update(
+            dict(log=reduced_outputs.copy(), progress_bar=reduced_outputs.copy())
+        )
+
+        return reduced_outputs
 
     def configure_optimizers(self):
         lr_lbmd = lambda _: max(
@@ -225,11 +245,11 @@ class PointNet2ClassificationSSG(pl.LightningModule):
             dset,
             batch_size=self.hparams["batch_size"],
             shuffle=mode == "train",
-            num_workers=4,
+            num_workers=2,
             pin_memory=True,
             drop_last=mode == "train",
         )
-
+    
     def train_dataloader(self):
         return self._build_dataloader(self.train_dset, mode="train")
 
