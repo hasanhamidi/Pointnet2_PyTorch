@@ -52,15 +52,10 @@ class Indoor3DSemSeg(data.Dataset):
         labels_batches = np.concatenate(label_batchlist, 0)
         test_area_name = ["Area_"+str(num) for num in test_area]
         train_idxs, test_idxs = [], []
-        ii = 0
         for i, room_name in enumerate(room_filelist):
             area_name =  "_".join(room_name.split("_")[0:2])
             if area_name in test_area_name:
-                test_idxs.append(i)
-                ii+=1
-                if ii%1000 == 0:
-                    print(area_name)
-            
+                test_idxs.append(i)            
             else:
                 train_idxs.append(i)
 
