@@ -56,8 +56,8 @@ def main(cfg):
         distributed_backend=cfg.distrib_backend
     )
 
-    # trainer.fit(model)
-    trainer.test(model)
+    trainer.fit(model)
+    #trainer.test(model)
     
 
 
