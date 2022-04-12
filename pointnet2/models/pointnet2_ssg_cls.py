@@ -164,16 +164,16 @@ class PointNet2ClassificationSSG(pl.LightningModule):
       self.flag = 0
       loss = F.cross_entropy(logits,labels)
       results = torch.argmax(logits, dim=1)
-
+      try:
+            print(results)
+            print(labels)
+            print(results.size() , labels.size())
+      except:
+            pass
       return dict(res =results, label=labels)
 
     def test_end(self, outputs):
-        try:
-            print(outputs[0])
-            print(outputs[0][0].size())
-            print(outputs[0][1].size())
-        except:
-            pass
+
         reduced_outputs = {}
         for k in outputs[0]:
             for o in outputs:
