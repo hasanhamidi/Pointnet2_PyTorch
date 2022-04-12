@@ -83,10 +83,29 @@ class Indoor3DSemSeg(data.Dataset):
 
     def randomize(self):
         pass
-
+class fakeIndoor3DSemSeg(data.Dataset):
+    def __init__(self) -> None:
+        super().__init__()
+        self.size = 128
+    def __getitem__(self,idx):
+        current_points = torch.rand(4096).float()
+        current_labels = torch.randint(0, 13, (4096,)).long()
+        return current_points, current_labels
+    def __len__(self):
+        return self.size
+    
 
 if __name__ == "__main__":
-    dset = Indoor3DSemSeg(16, "./")
+    # dset = Indoor3DSemSeg(16, "./")
+    # print(dset[0])
+    # print(len(dset))
+    # dloader = torch.utils.data.DataLoader(dset, batch_size=32, shuffle=True)
+    # for i, data in enumerate(dloader, 0):
+    #     inputs, labels = data
+    #     if i == len(dloader) - 1:
+    #         print(inputs.size())
+    
+    dset = fakeIndoor3DSemSeg()
     print(dset[0])
     print(len(dset))
     dloader = torch.utils.data.DataLoader(dset, batch_size=32, shuffle=True)
