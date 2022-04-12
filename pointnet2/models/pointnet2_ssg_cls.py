@@ -144,8 +144,8 @@ class PointNet2ClassificationSSG(pl.LightningModule):
         logits = self.forward(pc)
         loss = F.cross_entropy(logits, labels)
         acc = (torch.argmax(logits, dim=1) == labels).float().mean()
-        # self.metric_moiu.update_state(torch.argmax(logits, dim=1).tolist(),labels.tolist())
-        # miou = self.metric_moiu.result().numpy()
+        self.metric_moiu.update_state(torch.argmax(logits, dim=1).tolist(),labels.tolist())
+        miou = self.metric_moiu.result().numpy()
 
         return dict(val_loss=loss, val_acc=acc)#, miou = torch.tensor(miou) )
 
