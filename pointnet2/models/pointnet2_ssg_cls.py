@@ -11,7 +11,7 @@ from torchvision import transforms
 import pointnet2.data.data_utils as d_utils
 from pointnet2.data.ModelNet40Loader import ModelNet40Cls
 
-from tensorflow.keras.metrics import MeanIoU
+# from tensorflow.keras.metrics import MeanIoU
 
 def set_bn_momentum_default(bn_momentum):
     def fn(m):
@@ -144,10 +144,10 @@ class PointNet2ClassificationSSG(pl.LightningModule):
         logits = self.forward(pc)
         loss = F.cross_entropy(logits, labels)
         acc = (torch.argmax(logits, dim=1) == labels).float().mean()
-        self.metric_moiu.update_state(torch.argmax(logits, dim=1).tolist(),labels.tolist())
-        miou = self.metric_moiu.result().numpy()
+        # self.metric_moiu.update_state(torch.argmax(logits, dim=1).tolist(),labels.tolist())
+        # miou = self.metric_moiu.result().numpy()
 
-        return dict(val_loss=loss, val_acc=acc, miou = torch.tensor(miou) )
+        return dict(val_loss=loss, val_acc=acc)#, miou = torch.tensor(miou) )
 
     def validation_end(self, outputs):
         all_miou = []
@@ -162,9 +162,9 @@ class PointNet2ClassificationSSG(pl.LightningModule):
         reduced_outputs.update(
             dict(log=reduced_outputs.copy(), progress_bar=reduced_outputs.copy())
         )
-        for item in outputs:
-          all_miou.append(item["miou"])
-        print("\n miou_val=======>",sum(all_miou) / len(all_miou))
+        # for item in outputs:
+        #   all_miou.append(item["miou"])
+        # print("\n miou_val=======>",sum(all_miou) / len(all_miou))
             
         return reduced_outputs
     def test_step(self,batch,batch_idx):
