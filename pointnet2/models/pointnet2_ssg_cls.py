@@ -173,7 +173,7 @@ class PointNet2ClassificationSSG(pl.LightningModule):
       return dict(res =results, label=labels)
 
     def test_end(self, outputs):
-
+        print(outputs)
         reduced_outputs = {}
         for k in outputs[0]:
             for o in outputs:
