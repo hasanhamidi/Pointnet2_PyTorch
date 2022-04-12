@@ -1,3 +1,4 @@
+from ast import Try
 import pytorch_lightning as pl
 import torch
 import torch.nn as nn
@@ -167,9 +168,12 @@ class PointNet2ClassificationSSG(pl.LightningModule):
       return dict(res =results, label=labels)
 
     def test_end(self, outputs):
-        print(outputs[0].size())
-        print(outputs[0][0])
-        print(outputs[0][1])
+        try:
+            print(outputs[0])
+            print(outputs[0][0].size())
+            print(outputs[0][1].size())
+        except:
+            pass
         reduced_outputs = {}
         for k in outputs[0]:
             for o in outputs:
