@@ -11,7 +11,7 @@ from torchvision import transforms
 import pointnet2.data.data_utils as d_utils
 from pointnet2.data.ModelNet40Loader import ModelNet40Cls
 
-# from tensorflow.keras.metrics import MeanIoU
+from tensorflow.keras.metrics import MeanIoU
 
 def set_bn_momentum_default(bn_momentum):
     def fn(m):
@@ -60,7 +60,7 @@ class PointNet2ClassificationSSG(pl.LightningModule):
 
         self.hparams = hparams
         self.flag = 1
-        # self.metric_moiu = MeanIoU(num_classes=13)
+        self.metric_moiu = MeanIoU(num_classes=13)
         self._build_model()
 
     def _build_model(self):
@@ -146,6 +146,7 @@ class PointNet2ClassificationSSG(pl.LightningModule):
         acc = (torch.argmax(logits, dim=1) == labels).float().mean()
         self.metric_moiu.update_state(torch.argmax(logits, dim=1).tolist(),labels.tolist())
         miou = self.metric_moiu.result().numpy()
+        print(miou)
 
         return dict(val_loss=loss, val_acc=acc)#, miou = torch.tensor(miou) )
 
