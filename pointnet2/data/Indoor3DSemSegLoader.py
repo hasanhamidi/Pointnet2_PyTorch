@@ -96,16 +96,7 @@ class fakeIndoor3DSemSeg(data.Dataset):
     
 
 if __name__ == "__main__":
-    # dset = Indoor3DSemSeg(16, "./")
-    # print(dset[0])
-    # print(len(dset))
-    # dloader = torch.utils.data.DataLoader(dset, batch_size=32, shuffle=True)
-    # for i, data in enumerate(dloader, 0):
-    #     inputs, labels = data
-    #     if i == len(dloader) - 1:
-    #         print(inputs.size())
-    
-    dset = fakeIndoor3DSemSeg()
+    dset = Indoor3DSemSeg(16, "./")
     print(dset[0])
     print(len(dset))
     dloader = torch.utils.data.DataLoader(dset, batch_size=32, shuffle=True)
@@ -113,3 +104,12 @@ if __name__ == "__main__":
         inputs, labels = data
         if i == len(dloader) - 1:
             print(inputs.size())
+    
+    # dset = fakeIndoor3DSemSeg()
+    # print(dset[0])
+    # print(len(dset))
+    # dloader = torch.utils.data.DataLoader(dset, batch_size=32, shuffle=True)
+    # for i, data in enumerate(dloader, 0):
+    #     inputs, labels = data
+    #     if i == len(dloader) - 1:
+    #         print(inputs.size())
