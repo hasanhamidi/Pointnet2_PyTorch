@@ -147,7 +147,7 @@ class PointNet2ClassificationSSG(pl.LightningModule):
         self.metric_moiu.update_state(torch.argmax(logits, dim=1).tolist(),labels.tolist())
         miou = self.metric_moiu.result().numpy()
 
-        return dict(val_loss=loss, val_acc=acc), miou = torch.tensor(miou) )
+        return dict(val_loss=loss, val_acc=acc, miou = torch.tensor(miou) )
 
     def validation_end(self, outputs):
         all_miou = []
