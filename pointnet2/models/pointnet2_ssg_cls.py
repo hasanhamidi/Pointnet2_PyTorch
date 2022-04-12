@@ -11,6 +11,7 @@ from torchvision import transforms
 import pointnet2.data.data_utils as d_utils
 from pointnet2.data.ModelNet40Loader import ModelNet40Cls
 
+from tensorflow.keras.metrics import MeanIoU
 
 def set_bn_momentum_default(bn_momentum):
     def fn(m):
@@ -30,7 +31,7 @@ class BNMomentumScheduler(lr_sched.LambdaLR):
         self.model = model
         self.setter = setter
         self.lmbd = bn_lambda
-
+        self.flag = 0
         self.step(last_epoch + 1)
         self.last_epoch = last_epoch
 
@@ -59,6 +60,7 @@ class PointNet2ClassificationSSG(pl.LightningModule):
 
         self.hparams = hparams
         self.flag = 1
+        self.metric_moiu = MeanIoU(num_classes=13)
         self._build_model()
 
     def _build_model(self):
@@ -124,14 +126,17 @@ class PointNet2ClassificationSSG(pl.LightningModule):
         return self.fc_layer(features.squeeze(-1))
 
     def training_step(self, batch, batch_idx):
+
+        
         pc, labels = batch
         logits = self.forward(pc)
         loss = F.cross_entropy(logits, labels)
         with torch.no_grad():
             acc = (torch.argmax(logits, dim=1) == labels).float().mean()
 
+        
+        
         log = dict(train_loss=loss, train_acc=acc)
-
         return dict(loss=loss, log=log, progress_bar=dict(train_acc=acc))
 
     def validation_step(self, batch, batch_idx):
@@ -139,10 +144,13 @@ class PointNet2ClassificationSSG(pl.LightningModule):
         logits = self.forward(pc)
         loss = F.cross_entropy(logits, labels)
         acc = (torch.argmax(logits, dim=1) == labels).float().mean()
+        self.metric_moiu.update_state(torch.argmax(logits, dim=1).tolist(),labels.tolist())
+        miou = self.metric_moiu.result().numpy()
 
-        return dict(val_loss=loss, val_acc=acc)
+        return dict(val_loss=loss, val_acc=acc), miou = torch.tensor(miou) )
 
     def validation_end(self, outputs):
+        all_miou = []
         reduced_outputs = {}
         for k in outputs[0]:
             for o in outputs:
@@ -154,7 +162,10 @@ class PointNet2ClassificationSSG(pl.LightningModule):
         reduced_outputs.update(
             dict(log=reduced_outputs.copy(), progress_bar=reduced_outputs.copy())
         )
-
+        for item in outputs:
+          all_miou.append(item["miou"])
+        print("\n miou_val=======>",sum(all_miou) / len(all_miou))
+            
         return reduced_outputs
     def test_step(self,batch,batch_idx):
       pc, labels = batch
@@ -173,7 +184,7 @@ class PointNet2ClassificationSSG(pl.LightningModule):
       return dict(res =results, label=labels)
 
     def test_end(self, outputs):
-        print(outputs)
+
         reduced_outputs = {}
         for k in outputs[0]:
             for o in outputs:

@@ -3,7 +3,7 @@ import torch
 import torch.nn as nn
 from pointnet2_ops.pointnet2_modules import PointnetFPModule, PointnetSAModule
 from torch.utils.data import DataLoader
-
+from pointnet2.data import  fakeIndoor3DSemSeg
 from pointnet2.data import Indoor3DSemSeg
 from pointnet2.models.pointnet2_ssg_cls import PointNet2ClassificationSSG
 
@@ -96,3 +96,7 @@ class PointNet2SemSegSSG(PointNet2ClassificationSSG):
         self.val_dset = Indoor3DSemSeg(self.hparams["num_points"], train=False,test_area = [5])
         self.test_dset = Indoor3DSemSeg(self.hparams["num_points"], train=False,test_area = [6])
 
+    # def prepare_data(self):
+    #     self.train_dset = fakeIndoor3DSemSeg()
+    #     self.val_dset = fakeIndoor3DSemSeg()
+    #     self.test_dset = fakeIndoor3DSemSeg()
