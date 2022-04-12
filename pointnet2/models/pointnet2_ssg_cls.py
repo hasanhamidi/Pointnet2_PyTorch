@@ -251,7 +251,7 @@ class PointNet2ClassificationSSG(pl.LightningModule):
             shuffle=mode == "train",
             num_workers=2,
             pin_memory=True,
-            drop_last=mode == "train",
+            drop_last=True,
         )
     
     def train_dataloader(self):
