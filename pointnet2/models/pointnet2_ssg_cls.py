@@ -60,7 +60,7 @@ class PointNet2ClassificationSSG(pl.LightningModule):
 
         self.hparams = hparams
         self.flag = 1
-        self.metric_moiu = MeanIoU(num_classes=13)
+        # self.metric_moiu = MeanIoU(num_classes=13)
         self._build_model()
 
     def _build_model(self):
