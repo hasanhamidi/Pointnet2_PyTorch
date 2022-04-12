@@ -88,7 +88,7 @@ class fakeIndoor3DSemSeg(data.Dataset):
         super().__init__()
         self.size = 128
     def __getitem__(self,idx):
-        current_points = torch.rand(4096).float()
+        current_points = torch.rand(4096,9).float()
         current_labels = torch.randint(0, 13, (4096,)).long()
         return current_points, current_labels
     def __len__(self):
