@@ -10,7 +10,7 @@ from torchvision import transforms
 
 import pointnet2.data.data_utils as d_utils
 from pointnet2.data.ModelNet40Loader import ModelNet40Cls
-
+import numpy as np
 from tensorflow.keras.metrics import MeanIoU
 
 def set_bn_momentum_default(bn_momentum):
@@ -142,13 +142,30 @@ class PointNet2ClassificationSSG(pl.LightningModule):
     def validation_step(self, batch, batch_idx):
         pc, labels = batch
         logits = self.forward(pc)
+
         loss = F.cross_entropy(logits, labels)
-        acc = (torch.argmax(logits, dim=1) == labels).float().mean()
+        argmax = torch.argmax(logits, dim=1)
+        acc = ( argmax == labels).float().mean()
+        shape_ious = []
+        pred_np = argmax.cpu().data.numpy()
+        target_np = labels.cpu().data.numpy() 
+        for shape_idx in range(target_np.shape[0]):
+            parts = range(13)#np.unique(target_np[shape_idx])
+            part_ious = []
+            for part in parts:
+                I = np.sum(np.logical_and(pred_np[shape_idx] == part, target_np[shape_idx] == part))
+                U = np.sum(np.logical_or(pred_np[shape_idx] == part, target_np[shape_idx] == part))
+                if U == 0:
+                    iou = 1 #If the union of groundtruth and prediction points is empty, then count part IoU as 1
+                else:
+                    iou = I / float(U)
+                part_ious.append(iou)
+            shape_ious.append(np.mean(part_ious))
         # self.metric_moiu.update_state(torch.argmax(logits, dim=1).tolist(),labels.tolist())
         # miou = self.metric_moiu.result().numpy()
         # print(miou)
 
-        return dict(val_loss=loss, val_acc=acc)#, miou = torch.tensor(miou) )
+        return dict(val_loss=loss, val_acc=acc) miou = torch.tensor(miou) )
 
     def validation_end(self, outputs):
         all_miou = []

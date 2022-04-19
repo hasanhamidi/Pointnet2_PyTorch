@@ -88,15 +88,15 @@ class PointNet2SemSegSSG(PointNet2ClassificationSSG):
             l_features[i - 1] = self.FP_modules[i](
                 l_xyz[i - 1], l_xyz[i], l_features[i - 1], l_features[i]
             )
-
+        print(l_features[0].size())
         return self.fc_lyaer(l_features[0])
 
-    def prepare_data(self):
-        self.train_dset = Indoor3DSemSeg(self.hparams["num_points"], train=True,test_area = [5,6])
-        self.val_dset = Indoor3DSemSeg(self.hparams["num_points"], train=False,test_area = [5])
-        self.test_dset = Indoor3DSemSeg(self.hparams["num_points"], train=False,test_area = [6])
-
     # def prepare_data(self):
-    #     self.train_dset = fakeIndoor3DSemSeg()
-    #     self.val_dset = fakeIndoor3DSemSeg()
-    #     self.test_dset = fakeIndoor3DSemSeg()
+    #     self.train_dset = Indoor3DSemSeg(self.hparams["num_points"], train=True,test_area = [5,6])
+    #     self.val_dset = Indoor3DSemSeg(self.hparams["num_points"], train=False,test_area = [5])
+    #     self.test_dset = Indoor3DSemSeg(self.hparams["num_points"], train=False,test_area = [6])
+
+    def prepare_data(self):
+        self.train_dset = fakeIndoor3DSemSeg()
+        self.val_dset = fakeIndoor3DSemSeg()
+        self.test_dset = fakeIndoor3DSemSeg()
