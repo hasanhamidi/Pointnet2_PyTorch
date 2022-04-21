@@ -72,6 +72,66 @@ class _PointnetSAModuleBase(nn.Module):
             new_features_list.append(new_features)
 
         return new_xyz, torch.cat(new_features_list, dim=1)
+##########################################################
+class Sampler(nn.Module):
+    def __init__(self):
+        super(Sampler, self).__init__()
+        self.npoint = None
+
+    def forward(
+        self, xyz: torch.Tensor, features: Optional[torch.Tensor]
+    ) -> Tuple[torch.Tensor, torch.Tensor]:
+        r"""
+        Parameters
+        ----------
+        xyz : torch.Tensor
+            (B, N, 3) tensor of the xyz coordinates of the features
+        features : torch.Tensor
+            (B, C, N) tensor of the descriptors of the the features
+
+        Returns
+        -------
+        new_xyz : torch.Tensor
+            (B, npoint, 3) tensor of the new features' xyz
+        new_features : torch.Tensor
+            (B,  \sum_k(mlps[k][-1]), npoint) tensor of the new_features descriptors
+        """
+
+        new_features_list = []
+
+        xyz_flipped = xyz.transpose(1, 2).contiguous()
+        new_xyz = (
+            pointnet2_utils.gather_operation(
+                xyz_flipped, pointnet2_utils.furthest_point_sample(xyz, self.npoint)
+            )
+            .transpose(1, 2)
+            .contiguous()
+            if self.npoint is not None
+            else None
+        )
+
+        for i in range(len(self.groupers)):
+            new_features = self.groupers[i](
+                xyz, new_xyz, features
+            )  # (B, C, npoint, nsample)
+
+            new_features = self.mlps[i](new_features)  # (B, mlp[-1], npoint, nsample)
+            new_features = F.max_pool2d(
+                new_features, kernel_size=[1, new_features.size(3)]
+            )  # (B, mlp[-1], npoint, 1)
+            new_features = new_features.squeeze(-1)  # (B, mlp[-1], npoint)
+
+            new_features_list.append(new_features)
+
+        return new_xyz, torch.cat(new_features_list, dim=1)
+
+
+#######################################################
+
+
+
+
+
 
 
 class PointnetSAModuleMSG(_PointnetSAModuleBase):
