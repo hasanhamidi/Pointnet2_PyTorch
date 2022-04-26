@@ -35,8 +35,8 @@ class Sampler(nn.Module):
 
         return xyz
 
-x = torch.rand(3,20,3)
+x = torch.rand(3,20,3).to("cuda:0")
 
-sampler = Sampler()
+sampler = Sampler().to("cuda:0")
 
 print(sampler(x))
