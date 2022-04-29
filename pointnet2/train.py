@@ -13,7 +13,7 @@ import omegaconf
 import pytorch_lightning as pl
 import torch
 from pytorch_lightning.loggers import TensorBoardLogger
-import surgeon_pytorch import Inspect,get_layers
+from surgeon_pytorch import Inspect,get_layers
 
 torch.backends.cudnn.enabled = True
 torch.backends.cudnn.benchmark = True
